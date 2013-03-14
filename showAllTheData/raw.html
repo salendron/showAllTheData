@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>raw</title>
+		<meta name="description" content="" />
+		<meta name="author" content="salendron" />
+		
+		<script src="js/demoData.js"></script>
+		<script src="js/log.js"></script>
+		<script src="js/showAllTheData.js"></script>
+		
+		<script>
+			var log = new Log();
+			
+			var satd = new ShowAllTheData();
+			
+			for(var i = 0; i < pingeborgTags.length; i++){
+				var du = new DataUnit();
+				
+				var tagName = new Characteristic();
+				tagName.setName("name");
+				tagName.setValue(pingeborgTags[i].tagname);
+				du.addCharacteristic(tagName);
+				
+				var time = new Characteristic();
+				time.setName("time");
+				time.setValue(pingeborgTags[i].time);
+				du.addCharacteristic(time);
+				
+				var type = new Characteristic();
+				type.setName("type");
+				type.setValue(pingeborgTags[i].type);
+				du.addCharacteristic(type);
+				
+				var lat = new Characteristic();
+				lat.setName("lat");
+				lat.setValue(pingeborgTags[i].lat);
+				du.addCharacteristic(lat);
+				
+				var lon = new Characteristic();
+				lon.setName("lon");
+				lon.setValue(pingeborgTags[i].lon);
+				du.addCharacteristic(lon);
+				
+				var os = new Characteristic();
+				os.setName("os");
+				os.setValue(pingeborgTags[i].os);
+				du.addCharacteristic(os);
+				
+				if(pingeborgTags[i].os != "other"){
+					satd.addDataUnit(du);
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+		<canvas width="800", height="500" id="myCanvas">...</canvas>
+		<script>
+			nameCount = satd.countCharacteristicGroupedByValue("type", true).length;
+			nameColors = satd.generateColorsBetween(nameCount,254,237,1,187,204,1);
+			satd.drawDataAreasForCharacteristic("myCanvas", "type", true, '#ffffff', colors);
+		</script>
+	</body>
+</html>
