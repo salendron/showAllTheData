@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>raw</title>
+		<meta name="description" content="" />
+		<meta name="author" content="salendron" />
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,900' rel='stylesheet' type='text/css'>
+		<script src="js/log.js"></script>
+		<script src="js/showAllTheData.js"></script>
+	</head>
+
+	<body>
+		<canvas width="600", height="500" id="myCanvas">...</canvas>
+		<script>
+			var data = new Array();
+			
+			var android = new Array();
+			android[0] = "Android";
+			android[1] = 10;
+			
+			var ios = new Array();
+			ios[0] = "iOS";
+			ios[1] = 100;
+			
+			var wp = new Array();
+			wp[0] = "Windows Phone";
+			wp[1] = 10;
+			
+			data[0] = android;
+			data[1] = ios;
+			data[2] = wp;
+			
+			var colors = new Array();
+			colors[0] = "#6B8E23";
+			colors[1] = "#9ACD32";
+			colors[2] = "#32CD32";
+			
+			var areamap = new AreaMap();
+			areamap.Data = data;
+			areamap.Colors = colors;
+			areamap.Font = "Roboto";
+			areamap.AbsoluteNumbers = false;
+			
+			areamap.draw(document.getElementById('myCanvas'));
+			areamap.changeValue(document.getElementById('myCanvas'),0,2500);
+		</script>
+	</body>
+</html>
