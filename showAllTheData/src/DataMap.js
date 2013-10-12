@@ -18,9 +18,6 @@ function DataMap(container, xValues, yValues, categoryValues, categories, colors
     this.circleScaleFactor = circleScaleFactor;
     this.animationTimeout = animationTimeout;
     
-    //dataPoints
-    this.dataPoints = null;
-    
     //values calculated by init
     this.width = 0;
     this.height = 0;
