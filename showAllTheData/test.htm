@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
         <script type="text/javascript" src="src/svg.min.js"></script>
         <script type="text/javascript" src="src/DataMap.js"></script>
+	<script type="text/javascript" src="src/TreeMap.js"></script>
 	<!--[if IE]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
@@ -34,10 +35,28 @@
                         } else {
                             console.log(pingebDownloads.length);
                             loadDataMap();
+			    loadTreeMap();
                         }
                     },
                 });
             }
+	    
+	    function loadTreeMap() {
+		var labels = ["Android", "iOS", "Windows Phone", "Symbian", "BlackBerry", "Samsung", "Bada", "other"];
+		var colors = ['#bdcc00','#ffed00','#33B5E5','#FFBB33','#AA66CC','#FF4444','#CC0000','#666666'];
+		var data = [0,0,0,0,0,0,0,0];
+		
+		for (i = 0; i < pingebDownloads.length; i++) {
+			for (j = 0; j < labels.length; j++) {
+				if(pingebDownloads[i]['os'] == labels[j]){
+					data[j] = data[j] + 1;
+				}
+			}
+		}
+		
+		var tm = new TreeMap('treemap', data, labels, colors, '#ffffff');
+		tm.draw();
+	    }
             
             function loadDataMap() {
 		var dataX = new Array();
@@ -57,7 +76,7 @@
 		
 		var ratio = difLon / difLat;
 		
-		var width = document.getElementById('canvas').style.width.replace("px","");
+		var width = document.getElementById('heatmap').style.width.replace("px","");
 		var height = (width / ratio) * 1;
 		
 		latPix = (width / 100) * (0.06 / (difLat / 100));
@@ -72,12 +91,12 @@
 			pointNames[i] = pingebDownloads[i]['tagname'];
 		}
                 
-                var map = new DataMap('canvas',
+                var map = new DataMap('heatmap',
 					   dataX,
 					   dataY,
 					   os,
 					   ["Android", "iOS", "Windows Phone", "Symbian", "BlackBerry", "Samsung", "Bada", "other"],
-					   ['#bdcc00','#ffed00','#33B5E5','#FFBB33','#AA66CC','#FF4444','#CC0000','#444444'],
+					   ['#bdcc00','#ffed00','#33B5E5','#FFBB33','#AA66CC','#FF4444','#CC0000','#666666'],
 					   pointNames,
 					   mouseOverCallback,
 					   mouseOutCallback,
@@ -91,7 +110,6 @@
             }
 	    
 	    function mouseOverCallback(name, category, value) {
-		console.log(name + " | " +  category + " | " + value);
 		document.getElementById('tagData').innerHTML = name + " - " + value + " <b>" + category + "</b> Downloads";
 	    }
 	    
@@ -103,7 +121,6 @@
             //start
             $( document ).ready(function() {
                 getDownloads(pingebKluApiBaseUrl, 1);
-                //loadDataMap();
             });
             
         </script>
@@ -111,9 +128,14 @@
 </head>
 <body bgcolor="#444444">
 <div style="margin-left:auto;margin-right:auto;width:900px;">
+	<h1 style="margin-top:15px;margin-bottom:10px;font-family:sans;font-size:2em;color:#ffffff;">TreeMap</h1>
+</div>
+<div id="treemap" style="width:900px;height:480px;margin-left:auto;margin-right:auto;"></div>
+	
+<div style="margin-left:auto;margin-right:auto;width:900px;">
 	<h1 style="margin-top:15px;margin-bottom:10px;font-family:sans;font-size:2em;color:#ffffff;">Heatmap</h1>
 </div>
-<div id="canvas" style="width:900px;height:480px;margin-left:auto;margin-right:auto;">
+<div id="heatmap" style="width:900px;height:480px;margin-left:auto;margin-right:auto;">
 	<div style="z-index:999999;background-color:#ffed00;height:50px;width:900px;">
 		<p id="tagData" style="padding-top:15px;padding-left:10px;font-family:sans;font-size:1.2em;color:#444444;"></p>
 	</div>
