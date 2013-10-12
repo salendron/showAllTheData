@@ -77,7 +77,8 @@ function TreeMap(container, data, labels, colors, background) {
             var w = Math.sqrt(thisValue * ratio);
             var h = thisValue / w;
             
-            this.draw.rect(w,h).move(0,this.height - h).fill(this.colors[i]);
+            var thisRect = this.draw.rect(0,0).move(0,this.height).fill(this.colors[i]);
+            thisRect.animate().size(w,h).move(0,this.height - h);
         }
     };
 }

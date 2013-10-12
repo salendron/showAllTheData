@@ -12,32 +12,26 @@
 	<![endif]-->
         
         <script type="application/x-javascript">
-            
             var pingebKluApiBaseUrl = "http://pingeb.org/apip";
             var pingebGraApiBaseUrl = "http://graz.pingeb.org/apip";
             var pingebVilApiBaseUrl = "http://villach.pingeb.org/apip";
             
-            var pingebApiDownloads = "/downloads?pageSize=1000&page="; //nneeds to append page number
+            var pingebApiDownloads = "/downloads?pageSize=5000"; 
              
             var pingebDownloads = new Array();
-            function getDownloads(baseUrl, startPage) {
+            function getDownloads(baseUrl) {
                 $.ajax({
                     type: "GET",
-                    url: baseUrl + pingebApiDownloads + startPage,
+                    url: baseUrl + pingebApiDownloads,
                     dataType: "jsonp",
                     success: function (data) {
-                        if (data.length > 0) {
-                            //append downloads to array
-                            pingebDownloads = pingebDownloads.concat(data);
-                            
-                            //call function again with next page
-                            getDownloads(baseUrl, ++startPage);
-                        } else {
-                            console.log(pingebDownloads.length);
-                            loadDataMap();
-			    loadTreeMap();
-			    loadTreeMap2();
-                        }
+			//append downloads to array
+			pingebDownloads = pingebDownloads.concat(data);
+			
+			console.log(pingebDownloads.length);
+                        loadDataMap();
+			loadTreeMap();
+			loadTreeMap2();
                     },
                 });
             }
@@ -132,6 +126,7 @@
 					   mouseOutCallback,
 					   '#ffffff',
 					   2,
+					   100,
 					   10);
 		
                 map.draw();
@@ -147,10 +142,9 @@
 		document.getElementById('tagData').innerHTML = "&nbsp;";
 	    }
             
-            
             //start
             $( document ).ready(function() {
-                getDownloads(pingebKluApiBaseUrl, 1);
+                getDownloads(pingebKluApiBaseUrl);
             });
             
         </script>

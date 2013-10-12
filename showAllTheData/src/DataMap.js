@@ -1,5 +1,5 @@
 
-function DataMap(container, xValues, yValues, categoryValues, categories, colors, pointNames, mouseoverCallback, mouseOutCallback, background, circleScaleFactor, animationTimeout) {
+function DataMap(container, xValues, yValues, categoryValues, categories, colors, pointNames, mouseoverCallback, mouseOutCallback, background, circleScaleFactor, animationTimeout, animationSpeed) {
     //container, draw object and background rect
     this.draw = null;
     this.container = null;
@@ -17,6 +17,7 @@ function DataMap(container, xValues, yValues, categoryValues, categories, colors
     this.background = background;
     this.circleScaleFactor = circleScaleFactor;
     this.animationTimeout = animationTimeout;
+    this.animationSpeed = animationSpeed;
     
     //values calculated by init
     this.width = 0;
@@ -67,40 +68,44 @@ function DataMap(container, xValues, yValues, categoryValues, categories, colors
     this.drawData = function() {        
         var i = me.drawCount;
         if (i < me.xValues.length) {
-            var x = me.xValues[i];
-            var y = me.yValues[i];
-            
-            var color = me.getCategoryColor(me.categoryValues[i]);
-            
-            var pointName = x  + "|" + y + "|" + color;
-            if (me.dataPoints[pointName] == null) {
-                var point = me.draw.circle(me.circleSize).move(x-(me.circleSize / 2),y-(me.circleSize / 2)).fill(color).attr({'fill-opacity': 0.5});
-                me.dataPoints[pointName] = {point:point, size:me.circleSize, name: me.pointNames[i], value: 1, category: me.categoryValues[i]};
-                
-                //Add Mouseover and out Listeners
-                me.dataPoints[pointName]['point'].on('mouseover', 
-                                                        function() {
-                                                           me.dataPoints[pointName]['point'].attr({'fill-opacity': 0.9});
-                                                           me.mouseoverCallback(me.dataPoints[pointName]['name'], me.dataPoints[pointName]['category'],me.dataPoints[pointName]['value']);
-                                                        }  
-                                                    );
-                
-                me.dataPoints[pointName]['point'].on('mouseout', 
-                                                        function() {
-                                                           me.dataPoints[pointName]['point'].attr({'fill-opacity': 0.5});
-                                                           me.mouseOutCallback(me.dataPoints[pointName]['name'], me.dataPoints[pointName]['category'],me.dataPoints[pointName]['value']);
-                                                        }  
-                                                    );
-                
-            } else {
-                me.dataPoints[pointName]['size'] = me.dataPoints[pointName]['size'] + me.circleGrowth;
-                me.dataPoints[pointName]['value'] = me.dataPoints[pointName]['value'] + 1;
-                me.dataPoints[pointName]['point'].animate().size(me.dataPoints[pointName]['size'],me.dataPoints[pointName]['size']);
-            }
-            
-            me.sortPoints();
-            
-            me.drawCount++;
+	    var count = 0;
+	    while (count < me.animationSpeed && i < me.xValues.length) {
+		var x = me.xValues[i];
+		var y = me.yValues[i];
+		
+		var color = me.getCategoryColor(me.categoryValues[i]);
+		
+		var pointName = x  + "|" + y + "|" + color;
+		if (me.dataPoints[pointName] == null) {
+		    var point = me.draw.circle(me.circleSize).move(x-(me.circleSize / 2),y-(me.circleSize / 2)).fill(color).attr({'fill-opacity': 0.5});
+		    me.dataPoints[pointName] = {point:point, size:me.circleSize, name: me.pointNames[i], value: 1, category: me.categoryValues[i]};
+		    
+		    //Add Mouseover and out Listeners
+		    me.dataPoints[pointName]['point'].on('mouseover', 
+							    function() {
+							       me.dataPoints[pointName]['point'].attr({'fill-opacity': 0.9});
+							       me.mouseoverCallback(me.dataPoints[pointName]['name'], me.dataPoints[pointName]['category'],me.dataPoints[pointName]['value']);
+							    }  
+							);
+		    
+		    me.dataPoints[pointName]['point'].on('mouseout', 
+							    function() {
+							       me.dataPoints[pointName]['point'].attr({'fill-opacity': 0.5});
+							       me.mouseOutCallback(me.dataPoints[pointName]['name'], me.dataPoints[pointName]['category'],me.dataPoints[pointName]['value']);
+							    }  
+							);
+		    
+		} else {
+		    me.dataPoints[pointName]['size'] = me.dataPoints[pointName]['size'] + me.circleGrowth;
+		    me.dataPoints[pointName]['value'] = me.dataPoints[pointName]['value'] + 1;
+		    me.dataPoints[pointName]['point'].animate().size(me.dataPoints[pointName]['size'],me.dataPoints[pointName]['size']);
+		}
+		
+		me.sortPoints();
+		
+		me.drawCount++;
+		count++;	
+	    }
             window.setTimeout(me.drawData, me.animationTimeout);
         }
     };
