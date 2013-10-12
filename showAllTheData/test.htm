@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title>Test</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+        <script type="text/javascript" src="src/svg.min.js"></script>
+        <script type="text/javascript" src="src/svg.easing.min.js"></script>
+        <script type="text/javascript" src="src/showAllTheData.js"></script>
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+        
+        <script type="application/x-javascript">
+            
+            var pingebKluApiBaseUrl = "http://pingeb.org/apip";
+            var pingebGraApiBaseUrl = "http://graz.pingeb.org/apip";
+            var pingebVilApiBaseUrl = "http://villach.pingeb.org/apip";
+            
+            var pingebApiDownloads = "/downloads?pageSize=1000&page="; //nneeds to append page number
+             
+            var pingebDownloads = new Array();
+            function getDownloads(baseUrl, startPage) {
+                $.ajax({
+                    type: "GET",
+                    url: baseUrl + pingebApiDownloads + startPage,
+                    dataType: "jsonp",
+                    success: function (data) {
+                        if (data.length > 0) {
+                            //append downloads to array
+                            pingebDownloads = pingebDownloads.concat(data);
+                            
+                            //call function again with next page
+                            getDownloads(baseUrl, ++startPage);
+                        } else {
+                            console.log(pingebDownloads.length);
+                            loadDataMap();
+                        }
+                    },
+                });
+            }
+            
+            function loadDataMap() {
+		var dataX = new Array();
+                var dataY = new Array();
+                var os = new Array();
+		var pointNames = new Array();
+		
+		//limits fill from config (short code)		
+		var limitMinLat = 46.600727;
+		var limitMinLon = 14.230599;
+		var limitMaxLat = 46.652725;
+		var limitMaxLon = 14.360075;
+		
+		//calculate pixel with
+		var difLat = limitMaxLat - limitMinLat;
+		var difLon = limitMaxLon - limitMinLon;
+		
+		var ratio = difLon / difLat;
+		
+		var width = document.getElementById('canvas').style.width.replace("px","");
+		var height = (width / ratio) * 1;
+		
+		latPix = (width / 100) * (0.06 / (difLat / 100));
+		lonPix = (height / 100) * (0.1 / (difLon / 100)); 
+		
+		pingebDownloads = pingebDownloads.reverse();
+		
+		for (i = 0; i < pingebDownloads.length; i++) {
+			dataX[i] = (width / 100) * ((pingebDownloads[i]['lon'] - limitMinLon) / (difLon / 100));
+			dataY[i] = height - ((height / 100) * ((pingebDownloads[i]['lat'] - limitMinLat) / (difLat / 100)));
+			os[i] = pingebDownloads[i]['os'];
+			pointNames[i] = pingebDownloads[i]['tagname'];
+		}
+                
+                var map = new DataMap('canvas',
+					   dataX,
+					   dataY,
+					   os,
+					   ["Android", "iOS", "Windows Phone", "Symbian", "BlackBerry", "Samsung", "Bada", "other"],
+					   ['#bdcc00','#ffed00','#33B5E5','#FFBB33','#AA66CC','#FF4444','#CC0000','#444444'],
+					   pointNames,
+					   mouseOverCallback,
+					   mouseOutCallback,
+					   '#ffffff',
+					   2,
+					   10);
+		
+                map.draw();
+		map.activateZoom();
+		map.activateDrag();
+            }
+	    
+	    function mouseOverCallback(name, category, value) {
+		console.log(name + " | " +  category + " | " + value);
+		document.getElementById('tagData').innerHTML = name + " - " + value + " <b>" + category + "</b> Downloads";
+	    }
+	    
+	    function mouseOutCallback(name, category, value) {
+		document.getElementById('tagData').innerHTML = "&nbsp;";
+	    }
+            
+            
+            //start
+            $( document ).ready(function() {
+                getDownloads(pingebKluApiBaseUrl, 1);
+                //loadDataMap();
+            });
+            
+        </script>
+        
+</head>
+<body bgcolor="#444444">
+<div style="margin-left:auto;margin-right:auto;width:900px;">
+	<h1 style="margin-top:15px;margin-bottom:10px;font-family:sans;font-size:2em;color:#ffffff;">Heatmap</h1>
+</div>
+<div id="canvas" style="width:900px;height:480px;margin-left:auto;margin-right:auto;">
+	<div style="z-index:999999;background-color:#ffed00;height:50px;width:900px;">
+		<p id="tagData" style="padding-top:15px;padding-left:10px;font-family:sans;font-size:1.2em;color:#444444;"></p>
+	</div>
+</div>
+ 
+</body>
+</html>
