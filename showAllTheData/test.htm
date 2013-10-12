@@ -56,6 +56,12 @@
 		
 		var tm = new TreeMap('treemap', data, labels, colors, '#ffffff');
 		tm.draw();
+		
+		//draw legend
+		document.getElementById('treemapLegend').innerHTML = "";
+		for (i = 0; i < labels.length; i++) {
+			document.getElementById('treemapLegend').innerHTML += "<nobr><span style='background-color:" + tm.colors[i] + "'>&nbsp;&nbsp;</span>&nbsp;<b>" + tm.labels[i] + "</b>&nbsp;" + tm.data[i] + "&nbsp;&nbsp;</nobr>&nbsp;";
+		}
 	    }
             
             function loadDataMap() {
@@ -127,11 +133,7 @@
         
 </head>
 <body bgcolor="#444444">
-<div style="margin-left:auto;margin-right:auto;width:900px;">
-	<h1 style="margin-top:15px;margin-bottom:10px;font-family:sans;font-size:2em;color:#ffffff;">TreeMap</h1>
 </div>
-<div id="treemap" style="width:900px;height:480px;margin-left:auto;margin-right:auto;"></div>
-	
 <div style="margin-left:auto;margin-right:auto;width:900px;">
 	<h1 style="margin-top:15px;margin-bottom:10px;font-family:sans;font-size:2em;color:#ffffff;">Heatmap</h1>
 </div>
@@ -140,6 +142,20 @@
 		<p id="tagData" style="padding-top:15px;padding-left:10px;font-family:sans;font-size:1.2em;color:#444444;"></p>
 	</div>
 </div>
+<br><br><br>
+
+<div style="margin-left:auto;margin-right:auto;width:900px;">
+	<h1 style="margin-top:15px;margin-bottom:10px;font-family:sans;font-size:2em;color:#ffffff;">Mobile Betriebssysteme</h1>
+</div>
+</div>
+<div id="treemap" style="width:900px;height:480px;margin-left:auto;margin-right:auto;">
+	<div style="z-index:999999;background-color:#ffffff;height:50px;width:900px;">
+		<p id="treemapLegend" style="padding-top:15px;padding-left:10px;font-family:sans;font-size:0.8em;color:#444444;"></p>
+	</div>
+</div>
+<br><br><br>	
+
+
  
 </body>
 </html>
