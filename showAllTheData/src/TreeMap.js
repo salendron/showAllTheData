@@ -69,8 +69,14 @@ function TreeMap(container, data, labels, colors, background) {
     
     this.drawData = function() {
         for (i = 0; i < this.data.length; i++) {
-            var w = this.onePercentWidth * (data[i] / this.onePercentData);
-            var h = this.onePercentHeight * (data[i] / this.onePercentData);
+            var total = this.width * this.height;
+            var thisValue = (total / 100) * (data[i] / this.onePercentData);
+            
+            var ratio = this.width / this.height;
+            
+            var w = Math.sqrt(thisValue * ratio);
+            var h = thisValue / w;
+            
             this.draw.rect(w,h).move(0,this.height - h).fill(this.colors[i]);
         }
     };
