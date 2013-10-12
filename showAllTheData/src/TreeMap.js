@@ -46,10 +46,6 @@ function TreeMap(container, data, labels, colors, background) {
                 }
         }
         
-        console.log(this.labels);
-        console.log(this.data);
-        console.log(this.colors);
-        
         //Load container size
         this.width = this.container.style.width;
         this.height = this.container.style.height;
